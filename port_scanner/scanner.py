@@ -41,11 +41,11 @@ def threader():
 
 q = Queue()
 
-for x in range(threads):  # Creating threads
+for x in range(threads):
     t = threading.Thread(target=threader)
     t.daemon = True
     t.start()
-# for port, desc in lib_ports.items():#Znane Porty
+# for port, desc in lib_ports.items():
 # q.put(int(port))
 for worker in range(1, rang):
     q.put(worker)
