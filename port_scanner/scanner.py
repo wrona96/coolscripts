@@ -1,18 +1,37 @@
+import argparse
 import json
 import socket
 import threading
 from queue import Queue
 
+# Init parser
+parser = argparse.ArgumentParser(usage='%(prog)s [options]', description='Basic port scanner with cmd line handler')
+
+# Add arguments
+parser.add_argument('-t', '--target', type=str, default='w3c.pl',
+                    help='Set target. (default: w3c.pl)')
+parser.add_argument('-w', '--workers', type=int, default=300,
+                    help='How many theards to create? (default: 300)')
+parser.add_argument('-r', '--range', type=int, default=1000,
+                    help='How many ports to scan? (default: 1000)')
+parser.add_argument('-i', '--intense', action='store_true',
+                    help='Scan only known ports. (default: False)')
+
+# Parse arguments to args
+args = parser.parse_args()
+
+threads = args.workers
+intense = args.intense
+rang = args.range
+target = args.target
+
 lib_ports = json.loads(open('ports.json').read())
-target = 'w3c.pl'
-threads = 300
-rang = 1000
 
 try:
     ip = socket.gethostbyname(target)
     print('\nChecking: {target} as {ip}\n'.format(target=target, ip=ip))
-except IndentationError:
-    print('This site does not exist!!!')
+except socket.gaierror:
+    print('This site does not exist or DNS problem')
 
 
 def port_scan(port):
@@ -45,9 +64,11 @@ for x in range(threads):
     t = threading.Thread(target=threader)
     t.daemon = True
     t.start()
-# for port, desc in lib_ports.items():
-# q.put(int(port))
-for worker in range(1, rang):
-    q.put(worker)
+if intense:
+    for port, desc in lib_ports.items():
+        q.put(int(port))
+else:
+    for worker in range(1, rang):
+        q.put(worker)
 
 q.join()
