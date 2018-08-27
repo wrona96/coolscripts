@@ -1,0 +1,2 @@
+# coolscripts
+For testing purposes.
