@@ -2,6 +2,7 @@ import argparse
 import json
 import socket
 import threading
+from itertools import chain
 from queue import Queue
 
 # Init parser
@@ -30,6 +31,7 @@ known = args.known
 rang = args.range
 target = args.target
 lib_ports = json.loads(args.input.read())
+storage = []
 
 # Remove Namespace < args
 del args
@@ -49,16 +51,12 @@ def port_scan(port):
     s.settimeout(0.5)
     try:
         s.connect((target, port))
-        try:
-            print('Port : {port} is open. ({desc})'.format(port=port, desc=lib_ports[str(port)]))
-            print('Port : {port} is open. ({desc})'.format(port=port, desc=lib_ports[str(port)]), file=output)
-        except KeyError:
-            print('Port : {port} is open.'.format(port=port))
-            print('Port : {port} is open.'.format(port=port), file=output)
     except socket.timeout:
         pass
     except socket.error:
         pass
+    else:
+        storage.append(port)
     finally:
         s.close()
 
@@ -85,4 +83,12 @@ else:
         q.put(worker)
 
 q.join()
+storage.sort()
+for port in storage:
+    if known or str(port) in chain(lib_ports):
+        print('Port : {port} is open. ({desc})'.format(port=port, desc=lib_ports[str(port)]))
+        print('Port : {port} is open. ({desc})'.format(port=port, desc=lib_ports[str(port)]), file=output)
+    else:
+        print('Port : {port} is open.'.format(port=port))
+        print('Port : {port} is open.'.format(port=port), file=output)
 output.close()
