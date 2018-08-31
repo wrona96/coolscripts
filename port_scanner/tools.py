@@ -17,6 +17,17 @@ class Scanner(object):
         self.lib_ports = json.loads(inp.read())
         self.output = out
 
+    def check_target(self):
+        try:
+            ip = socket.gethostbyname(self.target)
+        except socket.gaierror:
+            print('This site does not exist or DNS problem')
+            exit()
+        else:
+            print('\nChecking: {target} as {ip}\n'.format(target=self.target, ip=ip))
+            print('=======Start_Scanning=======', file=self.output)
+            print('\nChecking: {target} as {ip}\n'.format(target=self.target, ip=ip), file=self.output)
+
     def echo(self):
         for port in self.storage:
             if self.known or str(port) in chain(self.lib_ports):
@@ -48,6 +59,7 @@ class Scanner(object):
             self.q.task_done()
 
     def run(self):
+        self.check_target()
         for x in range(self.threads):
             t = threading.Thread(target=self.threader)
             t.daemon = True
