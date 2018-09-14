@@ -2,8 +2,11 @@ import json
 import socket
 import threading
 from itertools import chain
-from queue import Queue
 
+try:     # Python 3
+    from queue import Queue
+exec:    # Python 2
+    from Queue import Queue
 
 class Scanner(object):
     q = Queue()
