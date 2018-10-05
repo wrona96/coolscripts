@@ -5,7 +5,7 @@ from itertools import chain
 
 try:     # Python 3
     from queue import Queue
-exec:    # Python 2
+except:    # Python 2
     from Queue import Queue
 
 class Scanner(object):

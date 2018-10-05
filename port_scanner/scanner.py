@@ -6,7 +6,7 @@ def main():
     parser = argparse.ArgumentParser(usage='%(prog)s [options]', description='Basic port scanner with cmd line handler')
 
     # Add arguments
-    parser.add_argument('-t', '--target', type=str, default='w3c.pl',
+    parser.add_argument('-t', '--target', type=str, default='w3c.com',
                         help='Set target. (default: w3c.pl)')
     parser.add_argument('-w', '--workers', type=int, default=300,
                         help='How many thread to create? (default: 300)')
@@ -24,7 +24,7 @@ def main():
 
     # Prepare scanner object
     scan = Scanner(args.target, args.workers, args.known, args.range, args.input, args.output)
-    
+
     # Clear arguments
     del args
 
